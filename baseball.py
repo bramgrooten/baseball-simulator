@@ -5,7 +5,6 @@ such that we can compare different lineup possibilities.
 from batter import Batter
 import pandas as pd
 import numpy as np
-from numpy.random import rand
 
 
 class Game:
@@ -71,12 +70,8 @@ class Game:
 
     def in_play_out(self):
         self.game_state['outs'] += 1
-        if rand() < self.prob_advance_runner_on_out:
+        if np.random.rand() < self.prob_advance_runner_on_out:
             self.sac_fly_or_bunt()
-
-        .idea/
-        __pycache__/
-
 
     def steal(self):
         # todo
