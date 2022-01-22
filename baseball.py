@@ -9,7 +9,10 @@ import numpy as np
 
 class Game:
     def __init__(self, lineup, nr_innings=9, printing=False,
-                 prob_advance_runner_on_out=0.2):
+                 prob_advance_runner_on_out=0.2,
+                 prob_score_on_single=0.5,
+                 prob_1st_to_3rd=0.2,
+                 prob_score_from_1st=0.3):
         self.lineup = lineup
         self.nr_innings = nr_innings
         self.printing = printing
@@ -17,15 +20,25 @@ class Game:
         self.reset_game_state()
 
         self.prob_advance_runner_on_out = prob_advance_runner_on_out
+        self.prob_score_on_single = prob_score_on_single
+        self.prob_1st_to_3rd = prob_1st_to_3rd
+        self.prob_score_from_1st = prob_score_from_1st
 
 
     def reset_game_state(self):
         self.game_state = {'score': 0, 'inning':    1,
                            'outs':  0, 'batter_up': 1,
-                           'bases_occupied': [False, False, False]}
-                           # '1st_base_occupied': False,
-                           # '2nd_base_occupied': False,
-                           # '3rd_base_occupied': False}
+                           # 'bases': [False, False, False]}
+                           '1st_base': False,
+                           '2nd_base': False,
+                           '3rd_base': False}
+
+
+    def reset_inning_state(self):
+        self.game_state['1st_base'] = False
+        self.game_state['2nd_base'] = False
+        self.game_state['3rd_base '] = False
+        self.game_state['outs'] = 0
 
     def play(self):
         if self.printing:
@@ -37,8 +50,7 @@ class Game:
             self.game_state['inning'] += 1
 
     def play_inning(self):
-        self.game_state['bases_occupied'] = [False, False, False]
-        self.game_state['outs'] = 0
+        self.reset_inning_state()
         while self.game_state['outs'] < 3:
             self.steal()
             self.play_batter()
@@ -47,9 +59,10 @@ class Game:
 
     def play_batter(self):
         batter = self.lineup[self.game_state['batter_up']]
+        if self.printing:
+            print(f"Now up: {batter.name}")
         outcome = batter.swing()
-        # options = ["strike-out", "in-play-out", "walk",
-        #            "single", "double", "triple", "homerun"]
+        # options = ["strike-out", "in-play-out", "walk", "single", "double", "triple", "homerun"]
         if outcome == 'strike-out':
             self.strike_out()
         elif outcome == 'in-play-out':
@@ -66,12 +79,148 @@ class Game:
             self.homerun()
 
     def strike_out(self):
+        if self.printing:
+            print("Strike-out.")
         self.game_state['outs'] += 1
 
     def in_play_out(self):
+        if self.printing:
+            print("Ball in play, out.")
         self.game_state['outs'] += 1
         if np.random.rand() < self.prob_advance_runner_on_out:
             self.sac_fly_or_bunt()
+
+    def walk(self):
+        if self.printing:
+            print("Walk.")
+        if self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            self.game_state['score'] += 1
+        elif self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            self.game_state['3rd_base'] = True
+        elif self.game_state['1st_base'] and not self.game_state['2nd_base']:
+            self.game_state['2nd_base'] = True
+        elif not self.game_state['1st_base']:
+            self.game_state['1st_base'] = True
+
+    def single(self):
+        if self.printing:
+            print("Hits a single.")
+        if self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # bases loaded
+            self.game_state['score'] += 1
+            if np.random.rand() < self.prob_score_on_single:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+                if np.random.rand() < self.prob_1st_to_3rd:
+                    self.game_state['3rd_base'] = True
+                    self.game_state['2nd_base'] = False
+        elif self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            # 1st and 2nd
+            self.game_state['3rd_base'] = True
+            if np.random.rand() < self.prob_score_on_single:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+                if np.random.rand() < self.prob_1st_to_3rd:
+                    self.game_state['3rd_base'] = True
+                    self.game_state['2nd_base'] = False
+        elif self.game_state['1st_base'] and not self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # 1st and 3rd
+            self.game_state['score'] += 1
+            self.game_state['3rd_base'] = False
+            self.game_state['2nd_base'] = True
+            if np.random.rand() < self.prob_1st_to_3rd:
+                self.game_state['3rd_base'] = True
+                self.game_state['2nd_base'] = False
+        elif self.game_state['1st_base'] and not self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            # 1st only
+            self.game_state['2nd_base'] = True
+            if np.random.rand() < self.prob_1st_to_3rd:
+                self.game_state['3rd_base'] = True
+                self.game_state['2nd_base'] = False
+        elif not self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # 2nd and 3rd
+            self.game_state['1st_base'] = True
+            self.game_state['score'] += 1
+            self.game_state['2nd_base'] = False
+            if np.random.rand() < self.prob_score_on_single:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+        elif not self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            # 2nd only
+            self.game_state['1st_base'] = True
+            self.game_state['2nd_base'] = False
+            self.game_state['3rd_base'] = True
+            if np.random.rand() < self.prob_score_on_single:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+        elif not self.game_state['1st_base'] and not self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # 3rd only
+            self.game_state['1st_base'] = True
+            self.game_state['score'] += 1
+            self.game_state['3rd_base'] = False
+        else:
+            # bases empty
+            self.game_state['1st_base'] = True
+
+    def double(self):
+        if self.printing:
+            print("Hits a double!")
+        if self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # bases loaded
+            self.game_state['score'] += 2
+            self.game_state['1st_base'] = False
+            if np.random.rand() < self.prob_score_from_1st:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+        elif self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            # 1st and 2nd
+            self.game_state['1st_base'] = False
+            self.game_state['3rd_base'] = True
+            self.game_state['score'] += 1
+            if np.random.rand() < self.prob_score_from_1st:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+        elif self.game_state['1st_base'] and not self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # 1st and 3rd
+            self.game_state['score'] += 1
+            self.game_state['1st_base'] = False
+            self.game_state['2nd_base'] = True
+            if np.random.rand() < self.prob_score_from_1st:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+        elif self.game_state['1st_base'] and not self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            # 1st only
+            self.game_state['1st_base'] = False
+            self.game_state['2nd_base'] = True
+            self.game_state['3rd_base'] = True
+            if np.random.rand() < self.prob_score_from_1st:
+                self.game_state['score'] += 1
+                self.game_state['3rd_base'] = False
+        elif not self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # 2nd and 3rd
+            self.game_state['score'] += 2
+            self.game_state['3rd_base'] = False
+        elif not self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+            # 2nd only
+            self.game_state['score'] += 1
+        elif not self.game_state['1st_base'] and not self.game_state['2nd_base'] and self.game_state['3rd_base']:
+            # 3rd only
+            self.game_state['score'] += 1
+            self.game_state['2nd_base'] = True
+            self.game_state['3rd_base'] = False
+        else:
+            # bases empty
+            self.game_state['2nd_base'] = True
+
+    def triple(self):
+        if self.printing:
+            print("Hits a triple!")
+        # todo
+
+    def homerun(self):
+        if self.printing:
+            print("Hits a home-run!")
+        # todo
 
     def steal(self):
         # todo
