@@ -377,6 +377,7 @@ class Game:
         print("The lineup for today's game is:\n")
         for batter in self.lineup:
             print(batter.name)
+            batter.print_probabilities()
         print("\nPLAY BALL!\n")
 
     def get_score(self):
@@ -415,10 +416,10 @@ if __name__ == '__main__':
         batter = Batter(player_id=batter_id, dataset=dataset)
         lineup.append(batter)
 
-    game = Game(lineup, printing=False)
+    game = Game(lineup, printing=True)
     game.print_lineup()
     scores = []
-    nr_games = 100
+    nr_games = 1
     for _ in range(nr_games):
         game.reset_game_state()
         game.play()

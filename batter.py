@@ -59,4 +59,13 @@ class Batter:
         """
         return choice(self.options, p=self.probs)
 
+    def print_probabilities(self):
+        print(f"single: {self.probs[3]:.3f} \t "
+              f"double: {self.probs[4]:.3f} \t "
+              f"triple: {self.probs[5]:.3f} \t "
+              f"homerun: {self.probs[6]:.3f} \t "
+              f"walk: {self.probs[2]:.3f} \t "
+              f"in-play-out: {self.probs[1]:.3f} \t "
+              f"strike-out: {self.probs[0]:.3f}")
+
 
