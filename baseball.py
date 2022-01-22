@@ -1,13 +1,6 @@
 """
 Python script to simulate the offense side of a baseball game,
 such that we can compare different lineup possibilities.
-
-Possible improvements:
-- make double play prob depend on where runners are on base
-- make double play prob depend on which runner it is
-- make steal probs depend on which runner it is
-- actually, make all probabilities depend on which runner it is
-- make prob_advance_runner_on_out depend on where runners are on base
 """
 from batter import Batter
 import pandas as pd
