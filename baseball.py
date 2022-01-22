@@ -309,8 +309,37 @@ class Game:
                     print("Steal home! Run scored!")
 
     def double_play(self):
-        # todo
-        pass
+        if self.game_state['outs'] < 3:
+            self.game_state['outs'] += 1
+            if self.printing:
+                print("Double play!")
+            if self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+                # bases loaded, dp over home and 1st
+                self.game_state['1st_base'] = False
+            elif self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+                # 1st and 2nd, dp over 2nd and 1st
+                self.game_state['1st_base'] = False
+                self.game_state['2nd_base'] = False
+                self.game_state['3rd_base'] = True
+            elif self.game_state['1st_base'] and not self.game_state['2nd_base'] and self.game_state['3rd_base']:
+                # 1st and 3rd, dp over 2nd and 1st
+                if self.game_state['outs'] < 3:
+                    self.game_state['score'] += 1
+                self.game_state['1st_base'] = False
+                self.game_state['3rd_base'] = False
+            elif self.game_state['1st_base'] and not self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+                # 1st only, std dp
+                self.game_state['1st_base'] = False
+            elif not self.game_state['1st_base'] and self.game_state['2nd_base'] and self.game_state['3rd_base']:
+                # 2nd and 3rd, sac fly out at home
+                self.game_state['3rd_base'] = False
+            elif not self.game_state['1st_base'] and self.game_state['2nd_base'] and not self.game_state['3rd_base']:
+                # 2nd only, sac fly out at 3rd
+                self.game_state['2nd_base'] = False
+            elif not self.game_state['1st_base'] and not self.game_state['2nd_base'] and self.game_state['3rd_base']:
+                # 3rd only, sac fly out at home
+                self.game_state['3rd_base'] = False
+            # else, bases empty, dp not possible
 
     def sac_fly_or_bunt(self):
         # todo
