@@ -5,7 +5,9 @@ This Python code simulates the offense of a baseball team, so you can compare di
 ## How to run
 Run the `baseball.py` file.
 
-At the bottom, uncomment either `play_one_game` (to see a game printed out play-by-play) or `play_many_games` (to simulate many).
+At the bottom, uncomment either
+- `play_one_game` (to see a game printed out play-by-play) or 
+- `play_many_games` (to simulate many).
 
 
 ## Possible improvements:
