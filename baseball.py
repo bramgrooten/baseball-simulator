@@ -374,7 +374,7 @@ class Game:
             self.game_state['batter_up'] = 0
 
     def print_lineup(self):
-        print("The lineup for today's game is:\n")
+        print("\nThe lineup with their probabilities is:\n")
         for batter in self.lineup:
             print(batter.name)
             batter.print_probabilities()
@@ -384,9 +384,7 @@ class Game:
         return self.game_state['score']
 
 
-
-
-if __name__ == '__main__':
+def setup():
     dataset = pd.read_excel("mlb2019.xls", sheet_name=0, header=0)
     # marteke01
     # lemahdj01
@@ -395,7 +393,6 @@ if __name__ == '__main__':
     # reynobr01
     # alvaryo01
     # brantmi02
-
     lineup_id = [
         'anderti01',
         'bogaexa01',
@@ -410,24 +407,48 @@ if __name__ == '__main__':
         'rendoan01',
         ]
     assert len(lineup_id) == 9
-
     lineup = []
     for batter_id in lineup_id:
         batter = Batter(player_id=batter_id, dataset=dataset)
         lineup.append(batter)
+    return lineup
 
-    game = Game(lineup, printing=True)
+
+def play_many_games(lineup, nr_games=10_000):
+    game = Game(lineup, printing=False)
     game.print_lineup()
     scores = []
-    nr_games = 1
-    for _ in range(nr_games):
+    for game_idx in range(nr_games):
         game.reset_game_state()
         game.play()
         scores.append(game.get_score())
+        if (game_idx + 1) % 1000 == 0:
+            print(f"Played {game_idx+1} games")
 
     print(f"\nAfter {nr_games} games we have:")
     print(f"avg score: \t{np.mean(scores)}")
     print(f"median: \t{np.median(scores)}")
     print(f"std dev: \t{np.std(scores):.2f}")
+
+
+def play_one_game(lineup):
+    game = Game(lineup, printing=True)
+    game.print_lineup()
+    game.reset_game_state()
+    game.play()
+    score = game.get_score()
+    if score == 1:
+        print(f"\nThe final score is: 1 run.\n")
+    else:
+        print(f"\nThe final score is: {score} runs.\n")
+
+
+if __name__ == '__main__':
+    lineup = setup()
+
+    # play_many_games(lineup, nr_games=10_000)
+    play_one_game(lineup)
+
+
 
 
