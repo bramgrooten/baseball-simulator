@@ -33,7 +33,7 @@ At the bottom, uncomment either
 
 If you find this code useful, please cite:
 
-Grooten, Bram. _Baseball Simulator_. GitHub repository, 2022. https://github.com/bramgrooten/baseball-simulator
+Grooten, Bram. _Baseball Simulator_. GitHub repository. URL: https://github.com/bramgrooten/baseball-simulator, 2022.
 
 LaTeX format:
 ```
@@ -41,8 +41,7 @@ LaTeX format:
   title = {{Baseball Simulator}},
   author = {Grooten, Bram},
   year = {2022},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/bramgrooten/baseball-simulator}},
+  howpublished = {GitHub repository. URL: \url{https://github.com/bramgrooten/baseball-simulator}},
 }
 ```
 
