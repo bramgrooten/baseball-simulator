@@ -19,3 +19,20 @@ At the bottom, uncomment either
 - make histogram of scores when many are played
 
 
+## Citation
+
+If you find this code useful, please cite:
+
+Grooten, Bram. _Baseball Simulator_. GitHub repository, 2022. https://github.com/bramgrooten/baseball-simulator
+
+LaTeX format:
+```
+@misc{grooten2022baseball_simulator,
+  title = {{Baseball Simulator}},
+  author = {Grooten, Bram},
+  year = {2022},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/bramgrooten/baseball-simulator}},
+}
+```
+
