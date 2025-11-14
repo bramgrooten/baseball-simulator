@@ -43,6 +43,7 @@ def setup_mlb():
 
 def setup_own():
     lineup = [
+        # probabilities for:    K      out   walk    1B     2B     3B     HR
         Batter(probabilities=[0.150, 0.500, 0.150, 0.150, 0.045, 0.005, 0.000], name='JoeAverage1'),
         Batter(probabilities=[0.150, 0.500, 0.150, 0.150, 0.045, 0.005, 0.000], name='JoeAverage2'),
         Batter(probabilities=[0.150, 0.400, 0.150, 0.150, 0.045, 0.005, 0.100], name='MikeHomerun'),
@@ -52,7 +53,6 @@ def setup_own():
         Batter(probabilities=[0.150, 0.500, 0.150, 0.150, 0.045, 0.005, 0.000], name='JoeAverage7'),
         Batter(probabilities=[0.150, 0.500, 0.150, 0.150, 0.045, 0.005, 0.000], name='JoeAverage8'),
         Batter(probabilities=[0.150, 0.500, 0.150, 0.150, 0.045, 0.005, 0.000], name='JoeAverage9'),
-        #                      K    out     walk   1B      2B     3B    HR
     ]
     # Anthony Rendon:
     # strike-out: 0.133  in-play-out: 0.474  walk: 0.124  single: 0.144  double: 0.068	 triple: 0.005 	homerun: 0.053
