@@ -2,6 +2,16 @@
 
 This Python code simulates the offense of a baseball team, so you can compare different lineups and see which scores best.
 
+## Install 
+
+I recommend using [conda](https://www.anaconda.com/docs/getting-started/miniconda/install#quickstart-install-instructions) 
+to create a new virtual environment for this project. In the project directory, run:
+``` 
+conda create -n baseballsim python=3.10
+conda activate baseballsim
+pip install -r requirements.txt
+```
+
 ## How to run
 Run the `simulator.py` file.
 
